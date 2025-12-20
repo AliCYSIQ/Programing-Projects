@@ -1,16 +1,19 @@
 import json
 
 
-expenses = []
+print("**+-----------|Bugget Keeper|-----------+**")
 
-
-
-
+try:
+    with open("expenses.json", "r") as f:
+        expenses = json.load(f)
+except (json.JSONDecodeError,FileNotFoundError):
+    expenses = []
+    
 
 while True:
     going = True
     
-    print("**+-----------|Bugget Keeper|-----------+**")
+    
     print("\nchoose what you want or write anything else to exit\n\n1. Add Expense\n2. List All Expenses\n")
     choose = input("your choose is: ")
     
@@ -35,6 +38,8 @@ while True:
             
             if going:
                 expenses.append(user_dict)
+                with open("expenses.json","w") as f:
+                    json.dump(expenses,f)
                 print(f"\n**+-----------|Saved|-----------+**\n")
             else:
                 print("\nExitting...\n")
@@ -46,11 +51,12 @@ while True:
         if len(expenses) < 1:
             print("your expenses are empty.\n\nExitting...")
         else:    
-            print("\n\t   amount   | catgagory | descrption")
+            print("\n\t   amount|catgagory|descrption")
             for dics in expenses:
                 
-                print(f"your {num} is : ",end="")
-                print(*dics.values(), sep="  |   ")
+                print(f"your {num} is: ",end="")
+                
+                print(*dics.values(), sep="   |     ")
                 
                 num +=1
         
@@ -58,5 +64,5 @@ while True:
         print("\n\nExitting...")
         break
         
-            
-    
+with open("expenses.json","w") as f:
+    json.dump(expenses,f)

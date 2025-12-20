@@ -1,7 +1,7 @@
 import json
 
 
-print("**+-----------|Bugget Keeper|-----------+**")
+print("**+-----------|Budget Keeper|-----------+**")
 
 try:
     with open("expenses.json", "r") as f:

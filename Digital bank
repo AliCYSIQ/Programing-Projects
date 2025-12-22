@@ -70,10 +70,10 @@ def Create_New_Account(accs) -> None:
                     print("the name is already taken , use another name ")
 
 def Access_exists_Account(accs) -> None:             
-            account_name = input("please enter your name: ").lower()
+            account_name = input("please enter your name: ").strip().lower()
             while account_name not in accs:
                 print('account not found')
-                account_name = input("please enter your name: ")
+                account_name = input("please enter your name: ").strip().lower()
             
             print("\nloggin in...\n\n")
             while True:

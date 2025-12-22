@@ -1,2 +1,2 @@
 # my Projects
-these are all my projects that use to learn programing , for now it is only python
+these are all  projects that i wrtie to learn programing , for now it is only python

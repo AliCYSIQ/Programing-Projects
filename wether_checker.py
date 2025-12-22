@@ -1,6 +1,6 @@
 import requests as req
 
-API_KEY = "70222fa3697dffa80ae91f83bbf2cc71"
+API_KEY = "70222fa3697dffa80ae91f83bbf2cc71"#just free api , DO NOT USE IT .
 base_url = "http://api.openweathermap.org/data/2.5/weather"
 while True:
         

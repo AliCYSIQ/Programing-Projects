@@ -27,31 +27,31 @@ class BankAccount:
         return f"Account: {self.owner} | Balance: ${self.balance}"
 
 
-accounts = {}
+
 
 def main():
-    
+    accounts = {}
     print("\n--- welcome to our digital bank ---\n\n")
     while True:
         
         choose= input("1. Create a New Account\n2. Access an exists Account\n3. Exit\n\nYour Choose is: ").strip()
         if choose == '1':
-            Create_New_Account()
+            Create_New_Account(accounts)
         elif choose == '2':
-            Access_exists_Account()
+            Access_exists_Account(accounts)
         elif choose == '3':
             break
         else:
             print("\nplease write 1-3 only, do not use any other number or letter or char\n")
 
-def Create_New_Account() -> None:
+def Create_New_Account(accs) -> None:
     while True:
 
                 new_account = input("Please enter name to a new account('stop' to exit): ").lower()
 
                 if new_account == 'stop':
                     break
-                elif new_account not in accounts and new_account != "":
+                elif new_account not in accs and new_account != "":
                     
                     while True:
                         try:
@@ -63,15 +63,15 @@ def Create_New_Account() -> None:
                         except ValueError:
                             print("please enter a float number")
                     new = BankAccount(new_account,init_balance)
-                    accounts[new_account] = new
+                    accs[new_account] = new
                     
                     break
                 else:
                     print("the name is already taken , use another name ")
 
-def Access_exists_Account() -> None:             
+def Access_exists_Account(accs) -> None:             
             account_name = input("please enter your name: ").lower()
-            while account_name not in accounts:
+            while account_name not in accs:
                 print('account not found')
                 account_name = input("please enter your name: ")
             
@@ -82,7 +82,7 @@ def Access_exists_Account() -> None:
                     try:
                         Amount = float(input("\n\nhow much you want to deposit: "))
                         try:
-                            accounts[account_name].deposit(Amount)
+                            accs[account_name].deposit(Amount)
                         except ValueError:
                             print("\nplease enter a number more than 0")
                     except ValueError:
@@ -92,14 +92,14 @@ def Access_exists_Account() -> None:
                     try:
                         Amount = float(input("\n\nhow much you want to withdraw: "))
                         try:
-                            accounts[account_name].withdraw(Amount)
+                            accs[account_name].withdraw(Amount)
                         except ValueError:
                             print("\nplease enter a number more than zero and less than (or equal) your balance")
                     except ValueError:
                         print("\nplease write a float number")
                     
                 elif action == '3':                    
-                    print(accounts[account_name].get_info())
+                    print(accs[account_name].get_info())
                 elif action == '4':
                     break
                 else:

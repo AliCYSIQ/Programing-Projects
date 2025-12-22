@@ -53,17 +53,17 @@ def main():
                                 break
                             else:
                                 print("please write a number more than(or equal) a zero")
-                        except TypeError:
+                        except ValueError:
                             print("please enter a float number")
                     new = BankAccount(new_account,init_balance)
                     accounts[new_account] = new
-                    print(accounts)
+                    
                     break
                 else:
                     print("the name is already taken , use another name ")
         elif choose == '2':
             
-            account_name = input("please enter your name: ")
+            account_name = input("please enter your name: ").lower()
             while account_name not in accounts:
                 print('account not found')
                 account_name = input("please enter your name: ")
@@ -100,10 +100,8 @@ def main():
         elif choose == '3':
             break
         else:
-            print("\nplease write 1-3 only, do not use any other number or letter or char")
-            
-
-
+            print("\nplease write 1-3 only, do not use any other number or letter or char\n")
+                        
 
 if __name__ == "__main__":
     main()

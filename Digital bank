@@ -1,0 +1,109 @@
+class BankAccount:
+    """
+    A class representing a single bank account.
+    """
+
+    def __init__(self, owner: str, initial_balance: float = 0.0):
+
+        self.owner = owner
+        self.balance = initial_balance 
+        print(f"\nnow you create account in our bank , the owner name is {owner} and you have ${initial_balance} as initial balance.\n")
+        
+
+    def deposit(self, amount: float) -> None:
+
+        
+        if amount <= 0:
+            raise ValueError("Only positive numbers are allowed.")
+        self.balance += amount
+        print(f"you diposit {amount}$, now you have ${self.balance} in your account")
+
+    def withdraw(self, amount: float) -> None:
+        
+        if amount < 0 or self.balance < amount:
+            raise ValueError("pleas make sure you write a postive number and number that you have in your account.")
+        
+        self.balance -= amount
+        print(f"you withdraw ${amount} , now you have ${self.balance} in your account")
+
+    def get_info(self) -> str:
+        return f"Account: {self.owner} | Balance: ${self.balance}"
+
+
+
+def main():
+    accounts = {}
+    print("\n--- welcome to our digital bank ---\n\n")
+    while True:
+        
+        choose= input("1. Create a New Account\n2. Access an exists Account\n3. Exit\n\nYour Choose is: ").strip()
+        if choose == '1':
+            while True:
+
+                new_account = input("Please enter name to a new account('stop' to exit): ").lower()
+
+                if new_account == 'stop':
+                    break
+                elif new_account not in accounts and new_account != "":
+                    
+                    while True:
+                        try:
+                            init_balance = float(input("please enter the initial deposit of this account: "))
+                            if init_balance >= 0:
+                                break
+                            else:
+                                print("please write a number more than(or equal) a zero")
+                        except TypeError:
+                            print("please enter a float number")
+                    new = BankAccount(new_account,init_balance)
+                    accounts[new_account] = new
+                    print(accounts)
+                    break
+                else:
+                    print("the name is already taken , use another name ")
+        elif choose == '2':
+            
+            account_name = input("please enter your name: ")
+            while account_name not in accounts:
+                print('account not found')
+                account_name = input("please enter your name: ")
+            
+            print("\nloggin in...\n\n")
+            while True:
+                action = input("1. Deposit\n2. withdraw\n3. Info\n4. Log Out\n what action you want to take :")
+                if action == '1':
+                    try:
+                        Amount = float(input("\n\nhow much you want to deposit: "))
+                        try:
+                            accounts[account_name].deposit(Amount)
+                        except ValueError:
+                            print("\nplease enter a number more than 0")
+                    except ValueError:
+                        print("\nplease write a float number")
+                    
+                elif action == '2':
+                    try:
+                        Amount = float(input("\n\nhow much you want to withdraw: "))
+                        try:
+                            accounts[account_name].withdraw(Amount)
+                        except ValueError:
+                            print("\nplease enter a number more than zero and less than (or equal) your balance")
+                    except ValueError:
+                        print("\nplease write a float number")
+                    
+                elif action == '3':                    
+                    print(accounts[account_name].get_info())
+                elif action == '4':
+                    break
+                else:
+                    print("\nplease enter a vaild action")    
+        elif choose == '3':
+            break
+        else:
+            print("\nplease write 1-3 only, do not use any other number or letter or char")
+            
+
+
+
+if __name__ == "__main__":
+    main()

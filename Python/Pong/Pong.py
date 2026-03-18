@@ -1,8 +1,10 @@
 import pygame as pg
 import random
 import sys
+import math
 
 pg.init()
+pg.font.init()
 Xscreen = 540
 Yscreen = 650
 screen = pg.display.set_mode((Xscreen, Yscreen))  # x,y
@@ -36,6 +38,10 @@ def PlayerBaddelMovemnt():
         playerBaddel.right = Xscreen
 
 
+# Pass None for the font file argument
+SPEED_FONT = pg.font.Font(None, 25)
+
+
 while True:
     for event in pg.event.get():
         if event.type == pg.QUIT:  # If they click the 'X'
@@ -61,10 +67,16 @@ while True:
     if ball.colliderect(playerBaddel) or ball.colliderect(oppentBaddel):
         ball_speed_y *= -1
 
+    # (text string, antialias, text color, optional background color)
+    text_surface = SPEED_FONT.render(
+        f"{math.hypot(ball_speed_x, ball_speed_y):.1f} cm/s", True, (255, 255, 0)
+    )  # White text
+    screen.blit(text_surface, (ball.x + 3, ball.y + 3))
     if ball_speed_x > 0:
         ball_speed_x = baseXspeed
     if ball_speed_y > 0:
         ball_speed_y = baseYspeed
+
     PlayerBaddelMovemnt()
 
     pg.display.flip()

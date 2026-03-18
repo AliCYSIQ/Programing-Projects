@@ -1,4 +1,5 @@
 import pygame as pg
+import random
 import sys
 
 pg.init()
@@ -10,8 +11,11 @@ clock = pg.time.Clock()
 oppentBaddel = pg.Rect(230, 10, 100, 10)
 playerBaddel = pg.Rect(230, 630, 100, 10)
 ball = pg.Rect(Xscreen / 2, Yscreen / 2, 10, 10)
-ball_speed_x = 5
-ball_speed_y = 5
+ball_speed_x = 5 + random.randint(-1, 1)
+ball_speed_y = 5 + random.randint(-1, 1)
+
+baseXspeed = ball_speed_x
+baseYspeed = ball_speed_y
 
 
 def PlayerBaddelMovemnt():
@@ -46,13 +50,21 @@ while True:
     pg.draw.rect(surface=screen, color=(255, 255, 255), rect=oppentBaddel)
 
     ## move
+
     ball.x += ball_speed_x
     ball.y += ball_speed_y
-    if ball.top < 0 or ball.bottom > Yscreen:
-        ball_speed_y *= -1
-    if ball.left <= 0 or ball.right > Xscreen:
-        ball_speed_x *= -1
 
+    if ball.top < 0 or ball.bottom > Yscreen:
+        ball_speed_y *= -1.1
+    if ball.left <= 0 or ball.right > Xscreen:
+        ball_speed_x *= -1.1
+    if ball.colliderect(playerBaddel) or ball.colliderect(oppentBaddel):
+        ball_speed_y *= -1
+
+    if ball_speed_x > 0:
+        ball_speed_x = baseXspeed
+    if ball_speed_y > 0:
+        ball_speed_y = baseYspeed
     PlayerBaddelMovemnt()
 
     pg.display.flip()

@@ -15,9 +15,8 @@ playerBaddel = pg.Rect(230, 630, 100, 10)
 ball = pg.Rect(Xscreen / 2, Yscreen / 2, 10, 10)
 ball_speed_x = 5 + random.randint(-1, 1)
 ball_speed_y = 5 + random.randint(-1, 1)
-
-baseXspeed = ball_speed_x
-baseYspeed = ball_speed_y
+playerPoint = 0
+oppentPoint = 0
 
 
 def PlayerBaddelMovemnt():
@@ -38,8 +37,37 @@ def PlayerBaddelMovemnt():
         playerBaddel.right = Xscreen
 
 
+def MoveBall():
+    global ball_speed_x, ball_speed_y, oppentPoint, playerPoint
+    ball.x += ball_speed_x
+    ball.y += ball_speed_y
+
+    if ball.top < 0:
+        ball.x = Xscreen / 2
+        ball.y = Yscreen / 2
+
+        playerPoint += 1
+    elif ball.bottom > Yscreen:
+        ball.x = Xscreen / 2
+        ball.y = Yscreen / 2
+        oppentPoint += 1
+
+    if ball.left <= 0 or ball.right > Xscreen:
+        ball_speed_x *= -1
+    if ball.colliderect(playerBaddel) or ball.colliderect(oppentBaddel):
+        ball_speed_y *= -1
+
+    # (text string, antialias, text color, optional background color)
+    text_surface = SPEED_FONT.render(
+        f"{math.hypot(ball_speed_x, ball_speed_y):.1f} cm/s", True, (255, 255, 0)
+    )  # White text
+
+    screen.blit(text_surface, (ball.x + 3, ball.y + 3))
+
+
 # Pass None for the font file argument
 SPEED_FONT = pg.font.Font(None, 25)
+POINT_FONT = pg.font.Font(None, 30)
 
 
 while True:
@@ -57,26 +85,10 @@ while True:
 
     ## move
 
-    ball.x += ball_speed_x
-    ball.y += ball_speed_y
+    MoveBall()
 
-    if ball.top < 0 or ball.bottom > Yscreen:
-        ball_speed_y *= -1.1
-    if ball.left <= 0 or ball.right > Xscreen:
-        ball_speed_x *= -1.1
-    if ball.colliderect(playerBaddel) or ball.colliderect(oppentBaddel):
-        ball_speed_y *= -1
-
-    # (text string, antialias, text color, optional background color)
-    text_surface = SPEED_FONT.render(
-        f"{math.hypot(ball_speed_x, ball_speed_y):.1f} cm/s", True, (255, 255, 0)
-    )  # White text
-    screen.blit(text_surface, (ball.x + 3, ball.y + 3))
-    if ball_speed_x > 0:
-        ball_speed_x = baseXspeed
-    if ball_speed_y > 0:
-        ball_speed_y = baseYspeed
-
+    point_text = POINT_FONT.render(f"{playerPoint}:{oppentPoint}", True, (255, 255, 0))
+    screen.blit(point_text, (Xscreen - 50, Yscreen / 2))
     PlayerBaddelMovemnt()
 
     pg.display.flip()

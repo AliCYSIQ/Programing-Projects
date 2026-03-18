@@ -2,12 +2,16 @@ import pygame as pg
 import sys
 
 pg.init()
-
-screen = pg.display.set_mode((540, 650))  # x,y
+Xscreen = 540
+Yscreen = 650
+screen = pg.display.set_mode((Xscreen, Yscreen))  # x,y
 pg.display.set_caption("Pong")
 clock = pg.time.Clock()
-oppentBaddel = pg.Rect(350, 10, 100, 10)
-playerBaddel = pg.Rect(350, 630, 100, 10)
+oppentBaddel = pg.Rect(230, 10, 100, 10)
+playerBaddel = pg.Rect(230, 630, 100, 10)
+ball = pg.Rect(Xscreen / 2, Yscreen / 2, 10, 10)
+ball_speed_x = 5
+ball_speed_y = 5
 
 
 def PlayerBaddelMovemnt():
@@ -24,8 +28,8 @@ def PlayerBaddelMovemnt():
 
     if playerBaddel.left < 0:
         playerBaddel.left = 0
-    elif playerBaddel.right > 540:
-        playerBaddel.right = 540
+    elif playerBaddel.right > Xscreen:
+        playerBaddel.right = Xscreen
 
 
 while True:
@@ -36,10 +40,20 @@ while True:
 
     screen.fill((30, 30, 46))  # Fill the screen with a dark color (RGB)
 
-    PlayerBaddelMovemnt()
-
+    ## draw
+    pg.draw.ellipse(surface=screen, color=(255, 0, 0), rect=ball)
     pg.draw.rect(surface=screen, color=(255, 255, 255), rect=playerBaddel)
     pg.draw.rect(surface=screen, color=(255, 255, 255), rect=oppentBaddel)
+
+    ## move
+    ball.x += ball_speed_x
+    ball.y += ball_speed_y
+    if ball.top < 0 or ball.bottom > Yscreen:
+        ball_speed_y *= -1
+    if ball.left <= 0 or ball.right > Xscreen:
+        ball_speed_x *= -1
+
+    PlayerBaddelMovemnt()
 
     pg.display.flip()
 

@@ -12,22 +12,36 @@ cellWidth = WIDTH//ROWS
 WHITECOLOR = (255,255,255)
 BLACKCOLOR = (0,0,0)
 GRAYCOLOR = (100, 100, 100)
-Grid = [[0 for _ in range(ROWS)] for _ in range(ROWS)]
-Grid[0][1] = 1
-Grid[2][10] = 1
-def DrawGrid():
-    for y, row in enumerate(Grid):
-        for x, gridvalue in enumerate(row):
-            
-            # 2. Create the Rect object using a capital 'R'
-            rect = pg.Rect(x * cellWidth, y * cellWidth, cellWidth, cellWidth)
 
-            # 3. Draw it based on the grid value
-            if gridvalue == 0:
-                pg.draw.rect(surface=screen, color=WHITECOLOR, rect=rect)
-            else:
-                pg.draw.rect(surface=screen, color=BLACKCOLOR, rect=rect)
-            pg.draw.rect(surface=screen,color=GRAYCOLOR,rect=rect,width=1)
+class Node:
+    def __init__(self,row,col,width):
+        self.row = row
+        self.col = col 
+        self.x =col*width
+        self.y = row * width
+        self.color = WHITECOLOR
+        self.width=width
+    def GetPos(self):
+        return self.row,self.col
+    def IsWall(self):
+        return self.color == BLACKCOLOR
+    def make_wall(self): 
+        self.color = BLACKCOLOR
+    def Draw(self,surface):
+        rect = (self.x,self.y,self.width,self.width)
+        
+        return pg.draw.rect(surface,self.color,rect),pg.draw.rect(surface=screen,color=GRAYCOLOR,rect=rect,width=1)
+    
+Grid = [[Node(row,col,cellWidth) for col in range(ROWS)] for row in range(ROWS)]
+
+    
+        
+def DrawGrid():
+   for i in Grid:
+       for node in i:
+           node.Draw(screen)
+        
+    
 
 while True:
     
@@ -40,9 +54,9 @@ while True:
             try:
                 mouseX //= cellWidth
                 mouseY //= cellWidth
-                mouseX = min(mouseX,len(Grid)-1)
-                mouseY = min(mouseY,len(Grid)-1)
-                Grid[mouseY][mouseX] =1
+                mouseX = max(0, min(ROWS - 1, mouseX))
+                mouseY = max(0, min(ROWS - 1, mouseY))
+                Grid[mouseY][mouseX].make_wall()
             except IndexError:
                 print(mouseX, mouseY)
     ## logic

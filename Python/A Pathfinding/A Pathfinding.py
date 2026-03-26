@@ -9,14 +9,15 @@ pg.display.set_caption("A* Pathfinding")
 clock = pg.time.Clock()
 
 ## gloabl vars
-ROWS = 100
-speed = 25 # make the number bigger for faster result (10 slow, 25 normal , 50 fast , 100 very fast , 1000 or bigger instatnt)
+ROWS = 50
+speed = 1 # make the number bigger for faster result (10 slow, 25 normal , 50 fast , 100 very fast , 1000 or bigger instatnt)
 cellWidth = WIDTH//ROWS
 WHITECOLOR = (255,255,255)
 BLACKCOLOR = (0,0,0)
 GRAYCOLOR = (100, 100, 100)
 GREENCOLOR = (0, 255, 0) # Start
 REDCOLOR = (255, 0, 0) # End
+ORANGECOLOR = (255, 165, 0) # End
 BLUECOLOR = (0, 0, 255) # Closed (Already checked)
 YELLOWCOLOR = (255, 255, 0) # Open (In the queue to be checked)
 PURPLECOLOR = (128, 0, 128) # The final path
@@ -28,6 +29,7 @@ def h(p1,p2):
     x2, y2 = p2
     return abs(x1 - x2) + abs(y1 - y2)
 class Node:
+    
     def __init__(self,row,col,width):
         self.row = row
         self.col = col 
@@ -37,6 +39,8 @@ class Node:
         self.width=width
         self.neighbors = []
         self.isA = False
+        self.cost = 1
+        self.isSwamp = False
     def GetPos(self):
         return self.row,self.col
     def IsWall(self):
@@ -44,9 +48,15 @@ class Node:
     def MakeWall(self): 
         self.isA = False
         self.color = BLACKCOLOR
-    def reset(self): 
+    def MakeSwamp(self): 
+
         self.isA = False
-        self.color = WHITECOLOR
+        self.isSwamp = True
+        self.color = ORANGECOLOR
+        self.cost = 5
+    def reset(self,color = WHITECOLOR): 
+        self.isA = False
+        self.color = color
 
     def MakeStart(self):
         self.isA = False
@@ -56,16 +66,21 @@ class Node:
         self.isA = False
         self.color = REDCOLOR
     def MakeClosed(self): 
-        self.color = BLUECOLOR 
+        if not self.isSwamp:
+            self.color = BLUECOLOR 
         self.isA = True
 
     def MakeOpen(self): 
         self.isA = True
-        self.color = YELLOWCOLOR
+        if not self.isSwamp:
+            self.color = YELLOWCOLOR
 
     def MakePath(self): 
-         self.isA = True 
-         self.color = PURPLECOLOR
+        self.isA = True
+        if  self.isSwamp:
+            self.color = (255,0,0)
+        else:
+            self.color = PURPLECOLOR
     def UpdateNeighbors(self, grid):
         self.neighbors = []
         # DOWN
@@ -126,7 +141,7 @@ def algorithm(draw, grid, start, end):
             return True
         
         for neighbor in current.neighbors:
-            tempGscore = gScore[current]+1
+            tempGscore = gScore[current]+neighbor.cost
             if tempGscore < gScore[neighbor]:
                 cameFrom[neighbor]=current
                 gScore[neighbor] = tempGscore
@@ -155,13 +170,16 @@ def draw_wrapper():
 def AReset():
     for i in Grid:
         for node in i:
-            if node.isA:
+            if node.isA and node.isSwamp:
+                node.reset(ORANGECOLOR)
+            elif node.isA:
                 node.reset()            
 
 while True:
     
     for event in pg.event.get():
         keys = pg.key.get_pressed()
+        
 
         if event.type == pg.QUIT:
             pg.quit()
@@ -171,6 +189,8 @@ while True:
             Grid = [[Node(row,col,cellWidth) for col in range(ROWS)] for row in range(ROWS)]
             start_node=None
             end_node = None
+        if keys[pg.K_r]:
+            AReset()
         if keys[pg.K_SPACE] and start_node and end_node:
             for row in Grid:
                 for node in row:
@@ -189,6 +209,8 @@ while True:
             elif not end_node and node != start_node:
                 end_node = node
                 end_node.MakeEnd()
+            elif node != start_node and node != end_node and keys[pg.K_LSHIFT]:
+                node.MakeSwamp()
             elif node != start_node and node != end_node:
                 node.MakeWall()
 

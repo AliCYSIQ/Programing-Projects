@@ -21,7 +21,7 @@ ORANGECOLOR = (255, 165, 0) # End
 BLUECOLOR = (0, 0, 255) 
 YELLOWCOLOR = (255, 255, 0) # Open (In the queue to be checked)
 PURPLECOLOR = (128, 0, 128) # The final path
-
+gameOver = False
 fontSize = ROWS+15
 try:
     font = pg.font.SysFont('arial', fontSize)
@@ -29,6 +29,7 @@ except:
     # Fallback if 'arial' is not available
     font = pg.font.Font(None, fontSize) 
 class Cell:
+    
     def __init__(self,row,col,width):
         self.row =row
         self.col = col
@@ -82,15 +83,14 @@ class Cell:
                 if 0 <= r < ROWS and 0 <= c < ROWS:
                     neighbor_cell = GRID[r][c]
 
-                    if not neighbor_cell.is_revealed and not neighbor_cell.isMine: 
+                    if not neighbor_cell.is_revealed and not neighbor_cell.isMine and not neighbor_cell.isFlagged: 
                         neighbor_cell.is_revealed = True
                         if -1 < neighbor_cell.NeighborMines()< 1 and not neighbor_cell.isFlagged:
                             neighbor_cell.CellDraw(WHITECOLOR)
                             neighbor_cell.EmptyCells()
                               
                         else:
-                            neighbor_cell.EntityDraw()
-                            
+                            neighbor_cell.EntityDraw()                           
     def FlagCell(self):
         if self.is_revealed:
             return
@@ -102,14 +102,15 @@ class Cell:
         
         pg.draw.ellipse(screen,REDCOLOR,rect=(self.x+5/2,self.y+5/2,self.width-5,self.width-5))
     def EntityDraw(self):
+        global gameOver
         if(self.isFlagged):
             return
         n = self.NeighborMines()
         rect = pg.Rect(self.x,self.y,self.width,self.width)
         
         if n ==-1:
-            self.CellDraw(REDCOLOR)
-            self.is_revealed = True
+            RevealAllMines()
+            gameOver = True
 
             return      
         elif n ==0:
@@ -125,6 +126,7 @@ class Cell:
             screen.blit(textSurface,textRect)
             
 GRID = [[Cell(row,col,cellWidth) for col in range(ROWS)]  for row in range(ROWS)]
+start = True
 def DrawGrid():
     for rows in GRID:
         for cell in rows:
@@ -132,18 +134,26 @@ def DrawGrid():
             cell.is_revealed = False
             cell.isFlagged = False
             cell.CellDraw()
-def RanMines(mines = TOTAL_MINES):
+
+def RanMines(pos,mines = TOTAL_MINES):
+    global start
     placed = 0
+    yD,xD = pos
+    
     while placed < mines:
         y = rand.randint(0, ROWS-1)
         x = rand.randint(0, ROWS-1)
-        if not GRID[y][x].isMine:
+        pos1= y,x
+        if not GRID[y][x].isMine and pos!=pos1:
             GRID[y][x].MakeMine()
             placed += 1
-    
-
-            
-start = True
+    start = False
+def RevealAllMines():
+    for rows in GRID:
+        for cell in rows:
+            if cell.isMine and not cell.isFlagged:
+                cell.CellDraw(REDCOLOR)
+                cell.is_revealed = True
 while True:   
     for event in pg.event.get():
         keys = pg.key.get_pressed()
@@ -152,26 +162,24 @@ while True:
             sys.exit()
         if keys[pg.K_r]:
             start = True
+            gameOver = False
         if event.type == pg.MOUSEBUTTONDOWN:
+            if gameOver:
+                continue
             x, y = pg.mouse.get_pos()
             Xcell = max(0, min(ROWS-1, x//cellWidth))
             Ycell = max(0, min(ROWS-1, y//cellWidth))
-            
+            if(start):
+                screen.fill(BLACKCOLOR)
+                DrawGrid()
+                RanMines((Ycell,Xcell))
             if event.button == 1: # Left Click
                 GRID[Ycell][Xcell].EntityDraw()
             elif event.button == 3: # Right Click
-                GRID[Ycell][Xcell].FlagCell()
-            
-
-    
-    if(start):
+                GRID[Ycell][Xcell].FlagCell()            
+    if start:
         screen.fill(BLACKCOLOR)
         DrawGrid()
-        RanMines()
-
-        start = False
-
-
+   
     pg.display.flip()
     clock.tick(60)
-    

@@ -1,0 +1,35 @@
+{
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "C_Cpp.autocomplete": "disabled",
+    "C_Cpp.errorSquiggles": "disabled",
+
+    "clangd.path": "C:/msys64/ucrt64/bin/clangd.exe",
+    "clangd.arguments": [
+        "--query-driver=C:/msys64/ucrt64/bin/g++.exe",
+        "--compile-commands-dir=${workspaceFolder}/build",
+        "--background-index",
+        "--header-insertion=never",
+        "--completion-style=detailed",
+        "--function-arg-placeholders=false"
+    ],
+    "clangd.onConfigChanged": "restart",
+
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureOnOpen": true,
+    "cmake.saveBeforeBuild": true,
+    "cmake.buildBeforeRun": true,
+
+    "editor.formatOnSave": true,
+    "[cpp]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+    "[c]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+
+    "editor.rulers": [100],
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.exclude": {
+        "**/build": true,
+        "**/.cache": true
+    }
+}

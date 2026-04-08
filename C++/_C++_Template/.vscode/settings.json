@@ -9,8 +9,7 @@
         "--compile-commands-dir=${workspaceFolder}/build",
         "--background-index",
         "--header-insertion=never",
-        "--completion-style=detailed",
-        "--function-arg-placeholders=false"
+        "--completion-style=detailed"
     ],
     "clangd.onConfigChanged": "restart",
 
@@ -18,10 +17,20 @@
     "cmake.configureOnOpen": true,
     "cmake.saveBeforeBuild": true,
     "cmake.buildBeforeRun": true,
+    "cmake.generator": "Ninja",
 
     "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.formatOnPaste": true,
+    "editor.suggest.insertMode": "replace",
+    "editor.acceptSuggestionOnEnter": "smart",
+
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+
     "[cpp]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
     "[c]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+    "[cmake]": { "editor.defaultFormatter": "twxs.cmake" },
 
     "editor.rulers": [100],
     "editor.tabSize": 4,

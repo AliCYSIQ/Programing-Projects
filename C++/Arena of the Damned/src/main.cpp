@@ -37,11 +37,58 @@ struct Fighter {
         inventoryCount = f.inventoryCount;
         totalCreated++;
         id = totalCreated;
-        for (int i = 0; i < inventorySize; i++) {
+        for (int i = 0; i < inventoryCount; i++) {
             inventory[i] = f.inventory[i];
         }
     }
+    // copy assignment
+    Fighter& operator=(const Fighter& f) {
+        if (this == &f)
+            return *this;
+        delete[] inventory;
+        inventory = new Item[f.inventorySize];
+        name = f.name;
+        stat = f.stat;
+        inventorySize = f.inventorySize;
+        inventoryCount = f.inventoryCount;
 
+        for (int i = 0; i < inventoryCount; i++) {
+            inventory[i] = f.inventory[i];
+        }
+        return *this;
+    }
+    // move consturcter
+    Fighter(Fighter&& f)
+        : name(std::move(f.name)),
+          stat(std::move(f.stat)),
+          inventorySize(std::move(f.inventorySize)) {
+        inventoryCount = f.inventoryCount;
+        totalCreated++;
+        id = totalCreated;
+
+        inventory = f.inventory;
+
+        f.inventory = nullptr;
+        f.inventorySize = 0;
+        f.inventoryCount = 0;
+    }
+    // move assigment
+    Fighter& operator=(Fighter&& f) {
+        if (this == &f)
+            return *this;
+        delete[] inventory;
+        name = std::move(f.name);
+        stat = f.stat;
+        inventorySize = f.inventorySize;
+        inventoryCount = f.inventoryCount;
+
+        inventory = f.inventory;
+
+        f.inventory = nullptr;
+        f.inventorySize = 0;
+        f.inventoryCount = 0;
+        return *this;
+    }
     bool isAlive() const { return stat.hp > 0; }
     ~Fighter() {
         delete[] inventory;
@@ -85,27 +132,29 @@ void combatRound(Fighter& a, Fighter& b, bool rest = false) {
     cout << "in round " << round << ": \n";
     applyDamage(b, aDmg);
     cout << "\t" << a.name << " deal " << aDmg << " damage to " << b.name;
-    cout << ", his health now is " << b.stat.hp << "!\n";
-
+    cout << ", " << b.name << " health now is " << b.stat.hp << "!\n";
+    if (!b.isAlive())
+        return;
     applyDamage(a, bDmg);
     cout << "\t" << b.name << " deal " << bDmg << " damage to " << a.name;
-    cout << ", his health now is " << a.stat.hp << "!\n";
+    cout << ", " << a.name << " health now is " << a.stat.hp << "!\n";
 }
 // True for player win , Flase to his lose
 bool runCombat(Fighter& player, Fighter* enemy) {
     if (enemy == nullptr)
         return false;
+
     combatRound(player, *enemy, true);
     while (player.isAlive() && enemy->isAlive()) {
         combatRound(player, *enemy);
     }
     if (player.isAlive()) {
-        cout << "\nPlayer is the winner\n";
+        cout << "\nPlayer is the winner\nHis health now is " << player.stat.hp;
         player.stat.attack += 50;
         player.stat.maxHp += 100;
         return true;
     } else {
-        cout << "\nPlayer lose to " << enemy->name << "!\n";
+        cout << "\nPlayer lose to " << enemy->name << "!\nHis health now is " << enemy->stat.hp;
         return false;
     }
 }
@@ -116,5 +165,5 @@ int main() {
     Fighter f2("ahmed", s1, 10);
     Fighter f3("ali", s1, 10);
 
-    runCombat(f1, &f2);
+    runCombat(f1, &f3);
 }

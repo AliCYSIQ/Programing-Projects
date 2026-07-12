@@ -32,8 +32,8 @@ class DynArray {
         size = 0;
         capacity = 0;
     }
-    size_t Size() { return size; }
-    size_t Capacity() { return capacity; }
+    size_t Size() const { return size; }
+    size_t Capacity() const { return capacity; }
     void PushBack(T value) {
         if (size == capacity) {
             if (size == 0) {
@@ -44,14 +44,14 @@ class DynArray {
                 size++;
                 return;
             }
-            capacity = (capacity * 2) - 1;
+            capacity *= 2;
             ReAlocate();
         }
         data[size] = value;
         size++;
     }
-    T GetLast() { return data[size - 1]; }
-    T operator[](int i) {
+    T GetLast() const { return data[size - 1]; }
+    T operator[](int i) const {
         if (i < 0)
             i = size + i;
 
@@ -63,34 +63,37 @@ class DynArray {
     DynArray& operator=(std::initializer_list<T> list) {
         delete[] data;
         size = capacity = list.size();
+        capacity++;
+        if (capacity % 2 != 0)
+            capacity++;
         data = new T[capacity];
         for (size_t i = 0; i < size; i++) {
             data[i] = *(list.begin() + i);
         }
         return *this;
     }
-    bool IsEmpty() { return size == 0; }
+    bool IsEmpty() const { return size == 0; }
     void Reserve(size_t cap) {
         if (cap <= capacity)
             return;
         capacity = cap;
         ReAlocate();
     }
-    T Front() { return data[0]; }
-    T Back() { return data[size - 1]; }
+    T Front() const { return data[0]; }
+    T Back() const { return data[size - 1]; }
     T PopBack() {
         if (size > 0)
             size--;
         return data[size];
     }
-    void Print() {
+    void Print() const {
         std::cout << std::endl;
         for (size_t i = 0; i < size; i++) {
             std::cout << data[i] << " ";
         }
         std::cout << std::endl;
     }
-    void Print(size_t index) {
+    void Print(size_t index) const {
         if (index >= size) {
             index = size;
         }
@@ -130,7 +133,7 @@ class DynArray {
 
 int main() {
     DynArray<int> a;
-    a.PushBack(5);
+
     a = {5, 10, 20, 32, 453, 543};
     a.Print();
     std::cout << a.Size() << std::endl;
@@ -141,6 +144,9 @@ int main() {
     a.Clear();
     std::cout << a.Size() << std::endl;
     std::cout << a.Capacity() << std::endl;
-
+    a = {5, 10, 20, 32, 453, 543, 2090, 1};
+    a.Print();
+    std::cout << a.Size() << std::endl;
+    std::cout << a.Capacity() << std::endl;
     return 0;
 }
